@@ -1,6 +1,6 @@
 use std::{cmp, fmt, fs};
 
-static INPUT_FILE: &str = "test_input.txt";
+static INPUT_FILE: &str = "input.txt";
 
 #[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq)]
 struct Point {
@@ -74,7 +74,16 @@ fn build_matrix(lines: Vec<Line>) -> Vec<Vec<i32>> {
         }
         // extended in part 2 for diagonal lines as well
         else {
-            panic!("Diagonal lines are not supported yet");
+            let x_delta = if start.x < end.x { 1 } else { -1 };
+            let y_delta = if start.y < end.y { 1 } else { -1 };
+            let mut curr_col = start.x;
+            let mut curr_row = start.y;
+            let line_length = (end.x - start.x).abs();
+            for _ in 0..line_length + 1 {
+                matrix[curr_row as usize][curr_col as usize] += 1;
+                curr_col += x_delta;
+                curr_row += y_delta;
+            }
         }
     }
 
@@ -110,7 +119,7 @@ fn part_2(raw_input: &str) {
     let lines: Vec<Line> = parse_lines(input_lines);
     let matrix = build_matrix(lines);
 
-    for row in &matrix{
+    for row in &matrix {
         println!("{:?}", row);
     }
 
@@ -121,5 +130,5 @@ fn part_2(raw_input: &str) {
 fn main() {
     let raw_input = fs::read_to_string(INPUT_FILE).expect("Failed to read input.txt");
     part_1(&raw_input);
-    // part_2(&raw_input);
+    part_2(&raw_input);
 }
