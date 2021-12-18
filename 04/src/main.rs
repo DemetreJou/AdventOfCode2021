@@ -150,7 +150,6 @@ fn part_1(raw_input: &str) {
     }
 }
 
-
 fn part_2(raw_input: &str) {
     let lines: Vec<&str> = raw_input.lines().collect();
     let moves = parse_moves(&lines);
