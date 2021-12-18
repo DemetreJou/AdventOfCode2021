@@ -3,8 +3,7 @@ use std::fs;
 static INPUT_FILE: &str = "input.txt";
 
 fn parse_out_number(line: &str) -> i32 {
-    line.split_whitespace()
-        .collect::<Vec<&str>>()[1]
+    line.split_whitespace().collect::<Vec<&str>>()[1]
         .parse::<i32>()
         .expect("Failed to parse input")
 }
@@ -32,7 +31,7 @@ fn part_2(raw_input: &str) {
             "f" => {
                 horizontal += parse_out_number(line);
                 depth += aim * parse_out_number(line);
-            },
+            }
             "d" => aim += parse_out_number(line),
             "u" => aim -= parse_out_number(line),
             &_ => println!("{}", ""),

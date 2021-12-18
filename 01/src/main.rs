@@ -3,7 +3,6 @@ use std::fs;
 static WINDOW_SIZE: usize = 3;
 static INPUT_FILE: &str = "input.txt";
 
-
 fn part_1(parsed_input: &Vec<i32>) {
     let mut count = 0;
     for index in 1..parsed_input.len() {

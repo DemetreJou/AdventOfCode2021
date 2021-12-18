@@ -1,12 +1,13 @@
-use std::fs;
 use std::collections::HashMap;
 use std::f32::RADIX;
-
+use std::fs;
 
 static INPUT_FILE: &str = "input.txt";
 
 fn convert_to_decimal(input: &str) -> u32 {
-    input.chars().map(|c| c.to_digit(32).unwrap())
+    input
+        .chars()
+        .map(|c| c.to_digit(32).unwrap())
         .fold(0, |acc, x| acc * RADIX + x)
 }
 
@@ -49,7 +50,6 @@ fn part_1(raw_input: &str) {
     println!("{:?}", gamma_decimal * epsilon_decimal);
 }
 
-
 fn part_2_helper(lines: Vec<&str>, x: char) -> &str {
     let mut possible_lines = lines.clone();
     let mut most_common: char;
@@ -70,20 +70,24 @@ fn part_2_helper(lines: Vec<&str>, x: char) -> &str {
         }
         // println!("{:?} {}", count, num_lines);
         // println!("{:?}\n", most_common);
-        possible_lines = possible_lines.into_iter().filter(|line| line.chars().nth(i as usize).unwrap() == most_common).collect();
+        possible_lines = possible_lines
+            .into_iter()
+            .filter(|line| line.chars().nth(i as usize).unwrap() == most_common)
+            .collect();
     }
     return possible_lines[0];
 }
-
 
 fn part_2(raw_input: &str) {
     let lines = raw_input.lines().collect::<Vec<&str>>();
     // Doing this clone because otherwise I get an error with lifetimes that I don't understand...yet
     let gamma = part_2_helper(lines.clone(), '1');
     let epsilon = part_2_helper(lines.clone(), '0');
-    println!("{:?}", convert_to_decimal(gamma) * convert_to_decimal(epsilon));
+    println!(
+        "{:?}",
+        convert_to_decimal(gamma) * convert_to_decimal(epsilon)
+    );
 }
-
 
 fn main() {
     let raw_input = fs::read_to_string(INPUT_FILE).expect("Failed to read input.txt");

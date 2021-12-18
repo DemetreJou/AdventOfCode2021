@@ -2,8 +2,7 @@ use std::fs;
 
 static INPUT_FILE: &str = "input.txt";
 
-#[derive(Debug)]
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 struct Board {
     mask: Vec<Vec<bool>>,
     grid: Vec<Vec<i32>>,
@@ -61,7 +60,8 @@ impl Board {
         // https://stackoverflow.com/questions/54756166/how-do-i-efficiently-iterate-through-a-vecvect-row-by-row
         let rows = self.grid.len();
         let columns = self.grid[0].len();
-        let iter = (0..rows).map(|row_idx| self.mask.iter().flatten().skip(row_idx).step_by(columns));
+        let iter =
+            (0..rows).map(|row_idx| self.mask.iter().flatten().skip(row_idx).step_by(columns));
 
         for mut col in iter {
             if col.all(|&x| x) {
@@ -69,7 +69,6 @@ impl Board {
                 break;
             }
         }
-
 
         if is_over {
             return Some(self.get_unmasked_cell_sum() * move_);
@@ -100,7 +99,10 @@ impl Board {
 }
 
 fn parse_moves(lines: &Vec<&str>) -> Vec<i32> {
-    lines[0].split(",").map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>()
+    lines[0]
+        .split(",")
+        .map(|x| x.parse::<i32>().unwrap())
+        .collect::<Vec<i32>>()
 }
 
 fn parse_boards(lines: &Vec<&str>) -> Vec<Board> {
@@ -119,7 +121,9 @@ fn parse_boards(lines: &Vec<&str>) -> Vec<Board> {
         if current_grid.len() == 5 {
             boards.push(Board::new(current_grid));
             current_grid = vec![temp];
-        } else { current_grid.push(temp); }
+        } else {
+            current_grid.push(temp);
+        }
     }
     boards.push(Board::new(current_grid));
     boards
@@ -179,7 +183,6 @@ fn part_2(raw_input: &str) {
         boards_2 = Vec::new();
     }
 }
-
 
 fn main() {
     let raw_input = fs::read_to_string(INPUT_FILE).expect("Failed to read input.txt");
