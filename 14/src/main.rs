@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
-use std::fs;
+use std::{fs, mem};
 
-static INPUT_FILE: &str = "test_input.txt";
+static INPUT_FILE: &str = "input.txt";
 
 fn parse_input(raw_input: &str) -> (&str, Vec<(&str, &str)>) {
     let (start, rules) = raw_input.split_once("\n\n").unwrap();
@@ -32,7 +32,6 @@ fn part_1(raw_input: &str) {
         result = apply_rules(start, &rules);
         start = &result;
     }
-    println!("{}", result.len());
     let mut map = HashMap::new();
     result.chars().for_each(|c| {
         let count = map.entry(c).or_insert(0);
@@ -40,6 +39,7 @@ fn part_1(raw_input: &str) {
     });
     let most_common = map.iter().max_by_key(|(_, count)| *count).unwrap();
     let least_common = map.iter().min_by_key(|(_, count)| *count).unwrap();
+    println!("{:?}", map);
     println!("{}", most_common.1 - least_common.1);
 }
 
@@ -66,35 +66,46 @@ fn part_2(raw_input: &str) {
         map.entry(start[i..i + 2].to_string()).or_insert(1 as usize);
     }
     let mut new_map = map.clone();
-    // println!("{:?}", map);
 
-    let frequency_count = create_frequency_map(&map);
+    let mut frequency_count = HashMap::new();
+    start.chars().for_each(|c| {
+        let count = frequency_count.entry(c).or_insert(0);
+        *count += 1;
+    });
+
     println!("{:?}", frequency_count);
+    println!("{:?}", frequency_count.iter().map(|(_, val)| *val).sum::<usize>());
 
-    for _ in 0..40    {
+    for _ in 0..10    {
         for (pattern, addition) in &rules {
             if map.contains_key(&*pattern.to_string()) && map.get(&*pattern.to_string()).unwrap() >= &1 {
                 let count = map.get(&*pattern.to_string()).unwrap();
                 *new_map.entry(pattern.parse().unwrap()).or_insert(0) -= count;
+                // new_map.remove(&*pattern.parse::<String>().unwrap());
                 *new_map.entry(pattern.chars().nth(0).unwrap().to_string() + &*addition.to_string()).or_insert(0) += count;
                 *new_map.entry(addition.to_string() + &*pattern.chars().nth(1).unwrap().to_string()).or_insert(0) += count;
+
+                // update the frequency count
+                *frequency_count.entry(addition.to_string().parse().unwrap()).or_insert(0) += count;
             }
         }
         map = new_map.clone();
     }
-    let count = map.iter().map(|(_, value)| *value).sum::<usize>();
-    println!("{}", count);
-
     // TODO: notice that the first and last character are always the same
     // can maybe take advantage of the fact that the additions happen between 2 characters
 
     // maybe instead of calculate the count at the end, keep track of the count of each character as the patterns are being matched
     // when a pattern is matched, pattern[0] and pattern[1] and additional are all increased by the same amount
-    let final_frequency = create_frequency_map(&map);
-    println!("{:?}", final_frequency);
-    let max_key = final_frequency.iter().max_by_key(|(_, value)| *value).unwrap();
-    let min_key = final_frequency.iter().min_by_key(|(_, value)| *value).unwrap();
+
+    println!("{:?}", frequency_count);
+    let max_key = frequency_count.iter().max_by_key(|(_, value)| *value).unwrap();
+    let min_key = frequency_count.iter().min_by_key(|(_, value)| *value).unwrap();
     println!("{}", max_key.1 - min_key.1);
+
+
+    // 2965769177098 not right answer
+
+    // 3692219987038 is apparently right answer though
 }
 
 fn main() {
